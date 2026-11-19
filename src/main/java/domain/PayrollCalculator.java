@@ -1,4 +1,7 @@
-package com.rosewood.payroll;
+package domain;
+
+import repository.EmployeeRepository;
+import repository.InMemoryEmployeeRepository;
 
 public class PayrollCalculator {
 

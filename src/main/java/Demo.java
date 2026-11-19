@@ -1,4 +1,4 @@
-package com.rosewood.payroll;
+import domain.PayrollCalculator;
 
 public class Demo {
     public static void main(String[] args) {
