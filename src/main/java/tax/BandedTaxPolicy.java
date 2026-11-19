@@ -1,5 +1,6 @@
 package tax;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /** Taxes all of gross pay at the rate of the highest band it reaches. */
@@ -22,15 +23,16 @@ public final class BandedTaxPolicy implements TaxPolicy {
     }
 
     @Override
-    public double taxFor(double grossPay) {
-        return grossPay * rateFor(grossPay);
+    public BigDecimal taxFor(BigDecimal grossPay) {
+        return grossPay.multiply(rateFor(grossPay));
     }
 
-    private double rateFor(double grossPay) {
-        double rate = 0;
+    private BigDecimal rateFor(BigDecimal grossPay) {
+        BigDecimal rate = BigDecimal.ZERO;
         for (TaxBand band : bands) {
-            if (grossPay >= band.lowerLimit()) {
-                rate = band.rate();
+            BigDecimal lowerLimit = BigDecimal.valueOf(band.lowerLimit());
+            if (grossPay.compareTo(lowerLimit) >= 0) {
+                rate = BigDecimal.valueOf(band.rate());
             }
         }
         return rate;

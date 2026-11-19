@@ -3,6 +3,7 @@ package tax;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.math.BigDecimal;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,8 +11,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 class BandedTaxPolicyTest {
-
-    private static final double PESEWA_PRECISION = 0.0001;
 
     private final BandedTaxPolicy policy = BandedTaxPolicy.rosewoodBands();
 
@@ -24,8 +23,10 @@ class BandedTaxPolicyTest {
         "4999.99, 749.9985",
         "5000, 1250"
     })
-    void taxesAllOfGrossPayAtTheRateOfTheBandItReaches(double grossPay, double expectedTax) {
-        assertEquals(expectedTax, policy.taxFor(grossPay), PESEWA_PRECISION);
+    void taxesAllOfGrossPayAtTheRateOfTheBandItReaches(BigDecimal grossPay,
+            BigDecimal expectedTax) {
+        BigDecimal tax = policy.taxFor(grossPay);
+        assertEquals(0, expectedTax.compareTo(tax), "expected " + expectedTax + " but was " + tax);
     }
 
     @Test

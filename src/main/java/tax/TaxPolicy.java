@@ -1,6 +1,8 @@
 package tax;
 
+import java.math.BigDecimal;
+
 public interface TaxPolicy {
 
-    double taxFor(double grossPay);
+    BigDecimal taxFor(BigDecimal grossPay);
 }
