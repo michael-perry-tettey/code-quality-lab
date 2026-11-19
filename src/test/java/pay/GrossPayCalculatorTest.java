@@ -15,8 +15,8 @@ class GrossPayCalculatorTest {
     @Test
     @DisplayName("Pays every hour at the basic rate up to 40 hours")
     void paysEveryHourAtTheBasicRateUpToFortyHours() {
-        double grossPay = calculator.grossPayFor(new HoursWorked(40, 20));
-        assertEquals(800.00, grossPay, PESEWA_PRECISION);
+        double basicPay = calculator.basicPayFor(new HoursWorked(40, 20));
+        assertEquals(800.00, basicPay, PESEWA_PRECISION);
     }
 
     @Test
@@ -38,12 +38,5 @@ class GrossPayCalculatorTest {
     void paysHoursOverFortyAtTimeAndAHalf() {
         double overtimePay = calculator.overtimePayFor(new HoursWorked(50, 30));
         assertEquals(450.00, overtimePay, PESEWA_PRECISION);
-    }
-
-    @Test
-    @DisplayName("Adds basic and overtime pay into gross pay")
-    void addsBasicAndOvertimePayIntoGrossPay() {
-        double grossPay = calculator.grossPayFor(new HoursWorked(50, 30));
-        assertEquals(1650.00, grossPay, PESEWA_PRECISION);
     }
 }

@@ -20,15 +20,15 @@ public final class PayrollCalculator {
         this.taxPolicy = Objects.requireNonNull(taxPolicy, "taxPolicy");
     }
 
-    public double calculateNetPay(String employeeId, HoursWorked hoursWorked) {
+    public Payslip calculatePayslip(String employeeId, HoursWorked hoursWorked) {
         requireText(employeeId, "Employee ID");
         Employee employee = repository.getById(employeeId);
 
-        double grossPay = grossPayCalculator.grossPayFor(hoursWorked);
+        double basicPay = grossPayCalculator.basicPayFor(hoursWorked);
+        double overtimePay = grossPayCalculator.overtimePayFor(hoursWorked);
+        double grossPay = basicPay + overtimePay;
         double tax = taxPolicy.taxFor(grossPay);
         double netPay = grossPay - tax;
-
-        System.out.println("Net pay for " + employee.getName() + ": GHS " + netPay);
-        return netPay;
+        return new Payslip(employee, basicPay, overtimePay, tax, netPay);
     }
 }
