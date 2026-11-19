@@ -1,20 +1,21 @@
 package repository;
 
 import domain.Employee;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
-public class InMemoryEmployeeRepository implements EmployeeRepository {
+public final class InMemoryEmployeeRepository implements EmployeeRepository {
 
     private final Map<String, Employee> employees = new HashMap<>();
 
-    public InMemoryEmployeeRepository() {
-        employees.put("e1", new Employee("e1", "Efua Sarpong"));
-        employees.put("e2", new Employee("e2", "Kwame Owusu"));
+    public InMemoryEmployeeRepository(Collection<Employee> employees) {
+        employees.forEach(employee -> this.employees.put(employee.getId(), employee));
     }
 
     @Override
-    public Employee findById(String id) {
-        return employees.get(id); // returns null when the id is not found
+    public Optional<Employee> findById(String id) {
+        return Optional.ofNullable(employees.get(id));
     }
 }

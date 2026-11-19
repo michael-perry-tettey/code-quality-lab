@@ -1,16 +1,19 @@
 package domain;
 
+import java.util.Objects;
 import repository.EmployeeRepository;
-import repository.InMemoryEmployeeRepository;
 
 public class PayrollCalculator {
 
-    // The calculator makes its own repository, so callers and tests cannot give it another.
-    private final EmployeeRepository repository = new InMemoryEmployeeRepository();
+    private final EmployeeRepository repository;
+
+    public PayrollCalculator(EmployeeRepository repository) {
+        this.repository = Objects.requireNonNull(repository, "repository");
+    }
 
     public double calculateNetPay(String employeeId, double hoursWorked, double hourlyRate) {
         try {
-            Employee employee = repository.findById(employeeId);
+            Employee employee = repository.findById(employeeId).orElseThrow();
 
             double gross = hoursWorked * hourlyRate;
 
