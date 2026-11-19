@@ -45,7 +45,7 @@ The code and README leave these open. This is what I'll do and why.
 | Tax cliff: gross 999.99 nets 949.99, but 1000.00 nets 850.00 | Keep one rate on all of gross pay | Changing it would change everyone's pay without being asked. Tax sits behind `TaxPolicy`, so switching to marginal tax is one new class |
 | Unknown employee | Throw `EmployeeNotFoundException` with the ID; `Demo` reports it | Payroll must never quietly pay 0. The caller decides how to report it |
 | Rounding | Round basic pay, overtime and tax to 2 decimal places (pesewas), half up; net pay is gross minus tax | Cedis have pesewas, and a payslip whose lines add up exactly can be checked by hand |
-| Pay period | One call is one week; overtime is hours over 40 | 40 hours is a standard working week |
+| Pay period | One call is one week; overtime starts after `STANDARD_WEEK_HOURS` in `GrossPayCalculator` | The standard-week limit has one code constant |
 | Bad input | Reject hours below 0, above 168 or `NaN`; a rate of 0 or less; a null or blank employee ID. Zero hours is allowed and pays 0 | A week can't hold more than 168 hours, and a negative payslip is never right |
 | Hourly rate | Keep it as a parameter, not on `Employee` | Keeps the existing call the same; nothing in the code says otherwise |
 | Several lines for one employee in a week | Check each line, add the hours, pay once. Fail that employee's week if their lines have different rates or any line is bad | Overtime is weekly, so paying lines separately would miss it. A half-paid week is worse than a flagged one |
@@ -107,7 +107,8 @@ payslip easy to check.
 ```text
 src/main/java/
 ├── Demo.java
-├── domain/        Employee, HoursWorked, Payslip, PayrollCalculator
+├── domain/        Employee, HoursWorked, Payslip
+├── application/   PayrollCalculator
 ├── pay/           GrossPayCalculator
 ├── tax/           TaxPolicy, TaxBand, BandedTaxPolicy
 ├── report/        PayrollRun, PayrollRunReport, PayrollEntry, PayrollFailure
@@ -116,12 +117,15 @@ src/main/java/
 └── exception/     EmployeeNotFoundException
 ```
 
-Everything sits straight under `src/main/java`. `pom.xml` fixes the main class as `Demo`, so the
-old `-Dexec.mainClass=com.rosewood.payroll.Demo` command and a plain `mvn exec:java` both run it.
-PIT is pointed at the new packages.
+Everything sits straight under `src/main/java`. The exec plugin uses its standard default main
+class setting, so `mvn exec:java` runs the default-package `Demo`. PIT is pointed at the packages.
 
 Tax gets its own package because it's the part most likely to change: a new rule is one new
 `TaxPolicy` class.
+
+The Rosewood tax bands remain in code to match the exercise brief. A production service should
+load tax bands from versioned external configuration so approved rate changes do not require a
+code release. The demo writes to stdout; production should use a configured logger.
 
 ## 6. Decisions
 

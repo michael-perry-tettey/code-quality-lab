@@ -15,6 +15,7 @@
         <mockito.version>5.18.0</mockito.version>
         <jacoco.version>0.8.12</jacoco.version>
         <pitest.version>1.30.2</pitest.version>
+        <!-- 1.16.1 cannot read Java 27 class files; this version also supports the JDK 21 target. -->
         <pitest.junit5.version>1.2.3</pitest.junit5.version>
     </properties>
 
@@ -65,15 +66,10 @@
                 <version>3.2.5</version>
             </plugin>
 
-            <!-- Main class is fixed here, so the old -Dexec.mainClass=com.rosewood.payroll.Demo
-                 command still runs Demo after it moved out of that package -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.5.0</version>
-                <configuration>
-                    <mainClass>Demo</mainClass>
-                </configuration>
             </plugin>
 
             <!-- Coverage: mvn verify, then open target/site/jacoco/index.html -->
@@ -109,6 +105,7 @@
                 </dependencies>
                 <configuration>
                     <targetClasses>
+                        <param>application.*</param>
                         <param>domain.*</param>
                         <param>exception.*</param>
                         <param>pay.*</param>
@@ -118,6 +115,7 @@
                         <param>validation.*</param>
                     </targetClasses>
                     <targetTests>
+                        <param>application.*</param>
                         <param>domain.*</param>
                         <param>exception.*</param>
                         <param>pay.*</param>
