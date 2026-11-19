@@ -1,7 +1,8 @@
 package repository;
 
 import domain.Employee;
+import java.util.Optional;
 
 public interface EmployeeRepository {
-    Employee findById(String id);
+    Optional<Employee> findById(String id);
 }
