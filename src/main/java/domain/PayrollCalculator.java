@@ -22,13 +22,11 @@ public final class PayrollCalculator {
 
     public double calculateNetPay(String employeeId, HoursWorked hoursWorked) {
         requireText(employeeId, "Employee ID");
-        Employee employee = repository.getById(employeeId);
+        repository.getById(employeeId);
 
         double grossPay = grossPayCalculator.grossPayFor(hoursWorked);
         double tax = taxPolicy.taxFor(grossPay);
         double netPay = grossPay - tax;
-
-        System.out.println("Net pay for " + employee.getName() + ": GHS " + netPay);
         return netPay;
     }
 }

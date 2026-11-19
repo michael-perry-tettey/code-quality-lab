@@ -19,7 +19,7 @@ Line numbers refer to `PayrollCalculator.java`.
 | <a id="p4"></a>4 | No input checks | line 8 | Fail fast | −10 hours gives a −190 payslip |
 | <a id="p5"></a>5 | Money is a `double`, never rounded | line 29 | Correctness | 37.5 h at 19.99 pays 712.14375 |
 | <a id="p6"></a>6 | One method does everything | lines 8–36 | Single responsibility | Lookup, overtime, tax and printing all change together |
-| <a id="p7"></a>7 | Calculator prints | line 30 | No side effects | Output can't be controlled or tested |
+| <a id="p7"></a>7 | Calculator prints | line 30 | Single responsibility; no side effects | Output can't be controlled or tested |
 | <a id="p8"></a>8 | Tax bands are hard-coded branches | lines 20–27 | Open-closed | Every tax change means editing this method |
 | <a id="p9"></a>9 | Magic numbers | 40, 0.5, 1000, 5000, 0.05, 0.15, 0.25 | Named constants | 40 is written twice; meanings live in comments |
 
