@@ -57,7 +57,7 @@ The code and README leave these open. This is what I'll do and why.
 
 The tests check this behaviour from the spec, not what the code does today.
 
-| Case | Expected | Code today |
+| Case | Expected | Original code |
 | --- | --- | --- |
 | 40 h at 20 | 760.00 | passes |
 | 50 h at 30 (overtime) | 1402.50 | passes |
@@ -133,12 +133,14 @@ Tax gets its own package because it's the part most likely to change: a new rule
 | Employee ID must not be blank, checked before the lookup | Fails with a clear message before any lookup | [#4 No input checks](#p4) |
 | Generic checks in `InputValidator` (`requireText`, `requireBetween`, `requirePositive`), each given the value's name; static, throwing `IllegalArgumentException` | Reused for any field without a new validator; the payroll limits stay in `HoursWorked`; static because there's no state to swap | [#4 No input checks](#p4) |
 | Repository passed in through the constructor; `getById` throws `EmployeeNotFoundException` for an unknown ID | Tests can use a mock; the repository reports "not found" itself, so no caller can ignore it | [#3 Repository created inside the class](#p3) |
-| Code is written step by step: plain `for` loops, `if` and `throw`, one call per line. Lambdas only where JUnit (`assertThrows`) or Mockito need them | Each step, and where each failure is thrown, is visible to the reader | – |
-| `calculateNetPay` takes `(employeeId, HoursWorked)` instead of three loose values | Fewer arguments, and the hours and rate are already checked when they arrive | [#4 No input checks](#p4) |
-| Overtime in `GrossPayCalculator`, with named constants | One job per class; numbers have names | [#6 One method does everything](#p6); [#9 Magic numbers](#p9) |
+| Code is written step by step: plain `for` loops, `if` and `throw`, no chained calls. Lambdas only where JUnit (`assertThrows`) or Mockito need them | Each step, and where each failure is thrown, is visible to the reader | – |
+| `calculatePayslip` takes `(employeeId, HoursWorked)` instead of three loose values | Fewer arguments, and the hours and rate are already checked when they arrive | [#4 No input checks](#p4) |
+| Overtime in `GrossPayCalculator`, with named constants and one pay rule shared by basic pay and overtime | One job per class; numbers have names; the rule is written once | [#6 One method does everything](#p6); [#9 Magic numbers](#p9) |
 | Tax behind `TaxPolicy`, bands as data, flat rate kept | A new tax rule is one new class, which absorbs the coming change | [#8 Tax bands are hard-coded](#p8) |
 | Calculator returns a `Payslip`; only `Demo` prints | No side effects; results can be tested | [#7 Calculator prints](#p7) |
 | Money as `BigDecimal`; basic pay, overtime and tax rounded to 2 decimal places, half up, in one place; net = gross − tax | Exact amounts, and every payslip adds up | [#5 Money is a `double`](#p5) |
-| Kept from AI: repository interface, overtime formula, band limits and rates | Correct: 50 h at 30 gives 1650 gross × 0.85 = 1402.50, matching the demo | – |
+| `Employee` is a record that rejects a blank ID or name | Equal by value; two people with the same name but different IDs stay different | – |
+| Weekly payroll run: each employee's lines are combined and paid once; a failure covers that employee's week and the run carries on | Overtime is weekly; one bad entry shouldn't stop everyone else's pay | – |
+| Kept from AI: the repository interface (method now `getById`), the overtime rule (time and a half over 40 hours), band limits and rates | Correct: 50 h at 30 gives 1650 gross × 0.85 = 1402.50, matching the demo | – |
 | Rewritten from AI: error handling and all three tests | They hid failures and proved nothing | [#1 Failures return 0](#p1); [#2 Tests prove nothing](#p2) |
 | Every expected-behaviour row is a test; full branch coverage; every PIT mutant killed | Shows the tests would catch a wrong result | [#2 Tests prove nothing](#p2) |
