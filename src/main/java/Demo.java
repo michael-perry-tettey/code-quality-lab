@@ -3,14 +3,17 @@ import domain.HoursWorked;
 import domain.PayrollCalculator;
 import exception.EmployeeNotFoundException;
 import java.util.List;
+import pay.GrossPayCalculator;
 import repository.InMemoryEmployeeRepository;
+import tax.BandedTaxPolicy;
 
 public class Demo {
     public static void main(String[] args) {
         InMemoryEmployeeRepository employees = new InMemoryEmployeeRepository(List.of(
                 new Employee("e1", "Efua Sarpong"),
                 new Employee("e2", "Kwame Owusu")));
-        PayrollCalculator calculator = new PayrollCalculator(employees);
+        PayrollCalculator calculator = new PayrollCalculator(employees, new GrossPayCalculator(),
+                BandedTaxPolicy.rosewoodBands());
 
         double efuaPay = calculator.calculateNetPay("e1", new HoursWorked(40, 20));
         System.out.println("Result e1, 40h @ 20     -> " + efuaPay);

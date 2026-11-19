@@ -111,13 +111,17 @@
                     <targetClasses>
                         <param>domain.*</param>
                         <param>exception.*</param>
+                        <param>pay.*</param>
                         <param>repository.*</param>
+                        <param>tax.*</param>
                         <param>validation.*</param>
                     </targetClasses>
                     <targetTests>
                         <param>domain.*</param>
                         <param>exception.*</param>
+                        <param>pay.*</param>
                         <param>repository.*</param>
+                        <param>tax.*</param>
                         <param>validation.*</param>
                     </targetTests>
                 </configuration>
