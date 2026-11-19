@@ -1,9 +1,11 @@
 package domain;
 
-public record Payslip(Employee employee, double basicPay, double overtimePay, double tax,
-        double netPay) {
+import java.math.BigDecimal;
 
-    public double grossPay() {
-        return basicPay + overtimePay;
+public record Payslip(Employee employee, BigDecimal basicPay, BigDecimal overtimePay,
+        BigDecimal tax, BigDecimal netPay) {
+
+    public BigDecimal grossPay() {
+        return basicPay.add(overtimePay);
     }
 }

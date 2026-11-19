@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import exception.EmployeeNotFoundException;
+import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,8 +22,6 @@ import tax.BandedTaxPolicy;
 
 @ExtendWith(MockitoExtension.class)
 class PayrollCalculatorTest {
-
-    private static final double PESEWA_PRECISION = 0.0001;
 
     @Mock
     private EmployeeRepository repository;
@@ -40,7 +39,7 @@ class PayrollCalculatorTest {
     void paysFortyHoursWithoutOvertime() {
         givenEmployee("e1");
         Payslip payslip = calculator.calculatePayslip("e1", new HoursWorked(40, 20));
-        assertEquals(760.00, payslip.netPay(), PESEWA_PRECISION);
+        assertEquals(new BigDecimal("760.00"), payslip.netPay());
     }
 
     @Test
@@ -48,7 +47,7 @@ class PayrollCalculatorTest {
     void paysHoursOverFortyAtTimeAndAHalf() {
         givenEmployee("e2");
         Payslip payslip = calculator.calculatePayslip("e2", new HoursWorked(50, 30));
-        assertEquals(1402.50, payslip.netPay(), PESEWA_PRECISION);
+        assertEquals(new BigDecimal("1402.50"), payslip.netPay());
     }
 
     @Test
@@ -56,7 +55,7 @@ class PayrollCalculatorTest {
     void addsNoOvertimeAtExactlyFortyHours() {
         givenEmployee("e1");
         Payslip payslip = calculator.calculatePayslip("e1", new HoursWorked(40, 10));
-        assertEquals(380.00, payslip.netPay(), PESEWA_PRECISION);
+        assertEquals(new BigDecimal("380.00"), payslip.netPay());
     }
 
     @Test
@@ -64,7 +63,7 @@ class PayrollCalculatorTest {
     void addsOvertimeFromTheFirstHourOverForty() {
         givenEmployee("e1");
         Payslip payslip = calculator.calculatePayslip("e1", new HoursWorked(41, 10));
-        assertEquals(394.25, payslip.netPay(), PESEWA_PRECISION);
+        assertEquals(new BigDecimal("394.25"), payslip.netPay());
     }
 
     @Test
@@ -72,7 +71,7 @@ class PayrollCalculatorTest {
     void paysNothingForZeroHours() {
         givenEmployee("e1");
         Payslip payslip = calculator.calculatePayslip("e1", new HoursWorked(0, 20));
-        assertEquals(0.00, payslip.netPay(), PESEWA_PRECISION);
+        assertEquals(new BigDecimal("0.00"), payslip.netPay());
     }
 
     @Test
@@ -80,7 +79,18 @@ class PayrollCalculatorTest {
     void roundsNetPayToTwoDecimalPlaces() {
         givenEmployee("e1");
         Payslip payslip = calculator.calculatePayslip("e1", new HoursWorked(1, 999.99));
-        assertEquals(949.99, payslip.netPay(), PESEWA_PRECISION);
+        assertEquals(new BigDecimal("949.99"), payslip.netPay());
+    }
+
+    @Test
+    @DisplayName("Rounds each payslip amount half up so the payslip adds up")
+    void roundsEachPayslipAmountHalfUpSoThePayslipAddsUp() {
+        givenEmployee("e1");
+        Payslip payslip = calculator.calculatePayslip("e1", new HoursWorked(37.5, 19.99));
+        assertAll(
+                () -> assertEquals(new BigDecimal("749.63"), payslip.basicPay()),
+                () -> assertEquals(new BigDecimal("37.48"), payslip.tax()),
+                () -> assertEquals(new BigDecimal("712.15"), payslip.netPay()));
     }
 
     @Test
@@ -88,7 +98,7 @@ class PayrollCalculatorTest {
     void taxesGrossOfExactlyOneThousandAtFifteenPercent() {
         givenEmployee("e1");
         Payslip payslip = calculator.calculatePayslip("e1", new HoursWorked(1, 1000));
-        assertEquals(850.00, payslip.netPay(), PESEWA_PRECISION);
+        assertEquals(new BigDecimal("850.00"), payslip.netPay());
     }
 
     @Test
@@ -96,7 +106,7 @@ class PayrollCalculatorTest {
     void taxesGrossOfExactlyFiveThousandAtTwentyFivePercent() {
         givenEmployee("e1");
         Payslip payslip = calculator.calculatePayslip("e1", new HoursWorked(1, 5000));
-        assertEquals(3750.00, payslip.netPay(), PESEWA_PRECISION);
+        assertEquals(new BigDecimal("3750.00"), payslip.netPay());
     }
 
     @Test
@@ -113,11 +123,11 @@ class PayrollCalculatorTest {
         givenEmployee("e2");
         Payslip payslip = calculator.calculatePayslip("e2", new HoursWorked(50, 30));
         assertAll(
-                () -> assertEquals(1200.00, payslip.basicPay(), PESEWA_PRECISION),
-                () -> assertEquals(450.00, payslip.overtimePay(), PESEWA_PRECISION),
-                () -> assertEquals(1650.00, payslip.grossPay(), PESEWA_PRECISION),
-                () -> assertEquals(247.50, payslip.tax(), PESEWA_PRECISION),
-                () -> assertEquals(1402.50, payslip.netPay(), PESEWA_PRECISION));
+                () -> assertEquals(new BigDecimal("1200.00"), payslip.basicPay()),
+                () -> assertEquals(new BigDecimal("450.00"), payslip.overtimePay()),
+                () -> assertEquals(new BigDecimal("1650.00"), payslip.grossPay()),
+                () -> assertEquals(new BigDecimal("247.50"), payslip.tax()),
+                () -> assertEquals(new BigDecimal("1402.50"), payslip.netPay()));
     }
 
     @Test

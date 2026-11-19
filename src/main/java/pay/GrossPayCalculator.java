@@ -1,22 +1,25 @@
 package pay;
 
 import domain.HoursWorked;
+import java.math.BigDecimal;
 
 public final class GrossPayCalculator {
 
     private static final double STANDARD_WEEK_HOURS = 40;
-    private static final double OVERTIME_MULTIPLIER = 1.5;
+    private static final BigDecimal OVERTIME_MULTIPLIER = new BigDecimal("1.5");
 
-    public double basicPayFor(HoursWorked hoursWorked) {
+    public BigDecimal basicPayFor(HoursWorked hoursWorked) {
         double standardHours = Math.min(hoursWorked.hours(), STANDARD_WEEK_HOURS);
-        return standardHours * hoursWorked.hourlyRate();
+        BigDecimal hourlyRate = BigDecimal.valueOf(hoursWorked.hourlyRate());
+        return BigDecimal.valueOf(standardHours).multiply(hourlyRate);
     }
 
-    public double overtimePayFor(HoursWorked hoursWorked) {
+    public BigDecimal overtimePayFor(HoursWorked hoursWorked) {
         if (hoursWorked.hours() <= STANDARD_WEEK_HOURS) {
-            return 0;
+            return BigDecimal.ZERO;
         }
         double overtimeHours = hoursWorked.hours() - STANDARD_WEEK_HOURS;
-        return overtimeHours * hoursWorked.hourlyRate() * OVERTIME_MULTIPLIER;
+        BigDecimal hourlyRate = BigDecimal.valueOf(hoursWorked.hourlyRate());
+        return BigDecimal.valueOf(overtimeHours).multiply(hourlyRate).multiply(OVERTIME_MULTIPLIER);
     }
 }

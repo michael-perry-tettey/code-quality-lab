@@ -44,7 +44,7 @@ The code and README leave these open. This is what I'll do and why.
 | --- | --- | --- |
 | Tax cliff: gross 999.99 nets 949.99, but 1000.00 nets 850.00 | Keep one rate on all of gross pay | Changing it would change everyone's pay without being asked. Tax sits behind `TaxPolicy`, so switching to marginal tax is one new class |
 | Unknown employee | Throw `EmployeeNotFoundException` with the ID; `Demo` reports it | Payroll must never quietly pay 0. The caller decides how to report it |
-| Rounding | Round net pay to 2 decimal places (pesewas), half up, once at the end | Cedis have pesewas. Rounding once avoids errors adding up |
+| Rounding | Round basic pay, overtime and tax to 2 decimal places (pesewas), half up; net pay is gross minus tax | Cedis have pesewas, and a payslip whose lines add up exactly can be checked by hand |
 | Pay period | One call is one week; overtime is hours over 40 | 40 hours is a standard working week |
 | Bad input | Reject hours below 0, above 168 or `NaN`; a rate of 0 or less; a null or blank employee ID. Zero hours is allowed and pays 0 | A week can't hold more than 168 hours, and a negative payslip is never right |
 | Hourly rate | Keep it as a parameter, not on `Employee` | Keeps the existing call the same; nothing in the code says otherwise |
@@ -135,7 +135,7 @@ Tax gets its own package because it's the part most likely to change: a new rule
 | Overtime in `GrossPayCalculator`, with named constants | One job per class; numbers have names | [#6 One method does everything](#p6); [#9 Magic numbers](#p9) |
 | Tax behind `TaxPolicy`, bands as data, flat rate kept | A new tax rule is one new class, which absorbs the coming change | [#8 Tax bands are hard-coded](#p8) |
 | Calculator returns a `Payslip`; only `Demo` prints | No side effects; results can be tested | [#7 Calculator prints](#p7) |
-| Money as `BigDecimal`, 2 decimal places, half up, rounded once | Exact amounts, no drift | [#5 Money is a `double`](#p5) |
+| Money as `BigDecimal`; basic pay, overtime and tax rounded to 2 decimal places, half up, in one place; net = gross − tax | Exact amounts, and every payslip adds up | [#5 Money is a `double`](#p5) |
 | Kept from AI: repository interface, overtime formula, band limits and rates | Correct: 50 h at 30 gives 1650 gross × 0.85 = 1402.50, matching the demo | – |
 | Rewritten from AI: error handling and all three tests | They hid failures and proved nothing | [#1 Failures return 0](#p1); [#2 Tests prove nothing](#p2) |
 | Every expected-behaviour row is a test; full branch coverage; every PIT mutant killed | Shows the tests would catch a wrong result | [#2 Tests prove nothing](#p2) |
