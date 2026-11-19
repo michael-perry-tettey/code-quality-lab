@@ -114,7 +114,7 @@ class PayrollCalculatorTest {
     void putsTheEmployeeOnThePayslip() {
         givenEmployee("e1");
         Payslip payslip = calculator.calculatePayslip("e1", new HoursWorked(40, 20));
-        assertEquals("e1", payslip.employee().getId());
+        assertEquals("e1", payslip.employee().id());
     }
 
     @Test

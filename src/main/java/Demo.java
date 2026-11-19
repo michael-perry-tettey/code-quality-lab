@@ -32,7 +32,7 @@ public class Demo {
     }
 
     private static void printPayslip(Payslip payslip) {
-        System.out.println(payslip.employee().getName()
+        System.out.println(payslip.employee().name()
                 + ": basic " + payslip.basicPay()
                 + ", overtime " + payslip.overtimePay()
                 + ", tax " + payslip.tax()

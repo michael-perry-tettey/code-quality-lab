@@ -12,7 +12,7 @@ public final class InMemoryEmployeeRepository implements EmployeeRepository {
 
     public InMemoryEmployeeRepository(Collection<Employee> employees) {
         for (Employee employee : employees) {
-            this.employees.put(employee.getId(), employee);
+            this.employees.put(employee.id(), employee);
         }
     }
 
