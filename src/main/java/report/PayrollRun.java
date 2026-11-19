@@ -35,9 +35,7 @@ public final class PayrollRun {
                 HoursWorked weeklyHours = combineLines(employeeId, employeeLines.getValue());
                 Payslip payslip = calculator.calculatePayslip(employeeId, weeklyHours);
                 payslips.add(payslip);
-            } catch (EmployeeNotFoundException e) {
-                failures.add(new PayrollFailure(employeeId, e.getMessage()));
-            } catch (IllegalArgumentException e) {
+            } catch (EmployeeNotFoundException | IllegalArgumentException e) {
                 failures.add(new PayrollFailure(employeeId, e.getMessage()));
             }
         }
