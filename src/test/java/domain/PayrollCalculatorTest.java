@@ -14,7 +14,9 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import pay.GrossPayCalculator;
 import repository.EmployeeRepository;
+import tax.BandedTaxPolicy;
 
 @ExtendWith(MockitoExtension.class)
 class PayrollCalculatorTest {
@@ -28,7 +30,8 @@ class PayrollCalculatorTest {
 
     @BeforeEach
     void setUp() {
-        calculator = new PayrollCalculator(repository);
+        calculator = new PayrollCalculator(repository, new GrossPayCalculator(),
+                BandedTaxPolicy.rosewoodBands());
     }
 
     @Test

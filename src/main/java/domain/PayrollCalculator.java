@@ -3,41 +3,32 @@ package domain;
 import static validation.InputValidator.requireText;
 
 import java.util.Objects;
+import pay.GrossPayCalculator;
 import repository.EmployeeRepository;
+import tax.TaxPolicy;
 
-public class PayrollCalculator {
+public final class PayrollCalculator {
 
     private final EmployeeRepository repository;
+    private final GrossPayCalculator grossPayCalculator;
+    private final TaxPolicy taxPolicy;
 
-    public PayrollCalculator(EmployeeRepository repository) {
+    public PayrollCalculator(EmployeeRepository repository, GrossPayCalculator grossPayCalculator,
+            TaxPolicy taxPolicy) {
         this.repository = Objects.requireNonNull(repository, "repository");
+        this.grossPayCalculator = Objects.requireNonNull(grossPayCalculator, "grossPayCalculator");
+        this.taxPolicy = Objects.requireNonNull(taxPolicy, "taxPolicy");
     }
 
     public double calculateNetPay(String employeeId, HoursWorked hoursWorked) {
         requireText(employeeId, "Employee ID");
         Employee employee = repository.getById(employeeId);
-        double hours = hoursWorked.hours();
-        double hourlyRate = hoursWorked.hourlyRate();
 
-        double gross = hours * hourlyRate;
+        double grossPay = grossPayCalculator.grossPayFor(hoursWorked);
+        double tax = taxPolicy.taxFor(grossPay);
+        double netPay = grossPay - tax;
 
-        // overtime: extra hours beyond 40 are paid at time-and-a-half
-        if (hours > 40) {
-            gross = gross + (hours - 40) * hourlyRate * 0.5;
-        }
-
-        // tax band, worked out from gross pay
-        double taxRate;
-        if (gross < 1000) {
-            taxRate = 0.05;      // LOW
-        } else if (gross < 5000) {
-            taxRate = 0.15;      // MEDIUM
-        } else {
-            taxRate = 0.25;      // HIGH
-        }
-
-        double net = gross - (gross * taxRate);
-        System.out.println("Net pay for " + employee.getName() + ": GHS " + net);
-        return net;
+        System.out.println("Net pay for " + employee.getName() + ": GHS " + netPay);
+        return netPay;
     }
 }
