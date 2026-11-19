@@ -6,10 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import application.PayrollCalculator;
 import domain.HoursWorked;
-import domain.PayrollCalculator;
 import domain.Payslip;
 import exception.EmployeeNotFoundException;
+import validation.PayrollValidationException;
 
 /**
  * Pays a week's entries. Each employee's lines are combined and paid once on the week's total,
@@ -35,7 +36,7 @@ public final class PayrollRun {
                 HoursWorked weeklyHours = combineLines(employeeId, employeeLines.getValue());
                 Payslip payslip = calculator.calculatePayslip(employeeId, weeklyHours);
                 payslips.add(payslip);
-            } catch (EmployeeNotFoundException | IllegalArgumentException e) {
+            } catch (EmployeeNotFoundException | PayrollValidationException e) {
                 failures.add(new PayrollFailure(employeeId, e.getMessage()));
             }
         }
@@ -44,32 +45,40 @@ public final class PayrollRun {
     }
 
     private static Map<String, List<PayrollEntry>> groupByEmployee(List<PayrollEntry> entries) {
+        Objects.requireNonNull(entries, "entries must not be null");
         Map<String, List<PayrollEntry>> linesByEmployee = new LinkedHashMap<>();
 
         for (PayrollEntry entry : entries) {
-            if (!linesByEmployee.containsKey(entry.employeeId())) {
-                linesByEmployee.put(entry.employeeId(), new ArrayList<>());
-            }
-            linesByEmployee.get(entry.employeeId()).add(entry);
+            Objects.requireNonNull(entry, "entries must not contain null elements");
+            linesByEmployee.computeIfAbsent(entry.employeeId(), key -> new ArrayList<>()).add(entry);
         }
 
         return linesByEmployee;
     }
 
     private static HoursWorked combineLines(String employeeId, List<PayrollEntry> lines) {
+        if (lines.isEmpty()) {
+            throw new IllegalStateException("Employee lines must not be empty");
+        }
         double hourlyRate = lines.get(0).hourlyRate();
+        requireConsistentRate(employeeId, lines, hourlyRate);
         double totalHours = 0;
 
         for (PayrollEntry line : lines) {
             HoursWorked lineHours = new HoursWorked(line.hours(), line.hourlyRate());
-            if (lineHours.hourlyRate() != hourlyRate) {
-                throw new IllegalArgumentException(
-                        "Lines for " + employeeId + " have different hourly rates");
-            }
-
             totalHours = totalHours + lineHours.hours();
         }
 
         return new HoursWorked(totalHours, hourlyRate);
+    }
+
+    private static void requireConsistentRate(String employeeId, List<PayrollEntry> lines,
+            double hourlyRate) {
+        for (PayrollEntry line : lines) {
+            if (line.hourlyRate() != hourlyRate) {
+                throw new PayrollValidationException(
+                        "Lines for " + employeeId + " have different hourly rates");
+            }
+        }
     }
 }

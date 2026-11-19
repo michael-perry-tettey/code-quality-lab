@@ -7,7 +7,7 @@ public final class InputValidator {
 
     public static String requireText(String value, String name) {
         if (value == null || value.isBlank()) {
-            throw new IllegalArgumentException(name + " must not be blank");
+            throw new PayrollValidationException(name + " must not be blank");
         }
 
         return value;
@@ -15,7 +15,7 @@ public final class InputValidator {
 
     public static double requireBetween(double value, double min, double max, String name) {
         if (Double.isNaN(value) || value < min || value > max) {
-            throw new IllegalArgumentException(
+            throw new PayrollValidationException(
                     name + " must be between " + min + " and " + max + ", got " + value);
         }
 
@@ -24,7 +24,7 @@ public final class InputValidator {
 
     public static double requirePositive(double value, String name) {
         if (Double.isNaN(value) || value <= 0) {
-            throw new IllegalArgumentException(name + " must be more than 0, got " + value);
+            throw new PayrollValidationException(name + " must be more than 0, got " + value);
         }
 
         return value;
