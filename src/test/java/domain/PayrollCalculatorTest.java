@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
+import exception.EmployeeNotFoundException;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -90,8 +91,16 @@ class PayrollCalculatorTest {
     @Test
     @DisplayName("Rejects an unknown employee")
     void rejectsAnUnknownEmployee() {
-        assertThrows(RuntimeException.class,
+        assertThrows(EmployeeNotFoundException.class,
                 () -> calculator.calculateNetPay("unknown", 40, 20));
+    }
+
+    @Test
+    @DisplayName("Names the missing employee in the error")
+    void namesTheMissingEmployeeInTheError() {
+        EmployeeNotFoundException error = assertThrows(EmployeeNotFoundException.class,
+                () -> calculator.calculateNetPay("unknown", 40, 20));
+        assertEquals("No employee with ID 'unknown'", error.getMessage());
     }
 
     @ParameterizedTest

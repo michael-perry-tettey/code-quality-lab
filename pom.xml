@@ -110,10 +110,12 @@
                 <configuration>
                     <targetClasses>
                         <param>domain.*</param>
+                        <param>exception.*</param>
                         <param>repository.*</param>
                     </targetClasses>
                     <targetTests>
                         <param>domain.*</param>
+                        <param>exception.*</param>
                         <param>repository.*</param>
                     </targetTests>
                 </configuration>
