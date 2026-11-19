@@ -48,6 +48,7 @@ The code and README leave these open. This is what I'll do and why.
 | Pay period | One call is one week; overtime is hours over 40 | 40 hours is a standard working week |
 | Bad input | Reject hours below 0, above 168 or `NaN`; a rate of 0 or less; a null or blank employee ID. Zero hours is allowed and pays 0 | A week can't hold more than 168 hours, and a negative payslip is never right |
 | Hourly rate | Keep it as a parameter, not on `Employee` | Keeps the existing call the same; nothing in the code says otherwise |
+| Several lines for one employee in a week | Check each line, add the hours, pay once. Fail that employee's week if their lines have different rates or any line is bad | Overtime is weekly, so paying lines separately would miss it. A half-paid week is worse than a flagged one |
 | Repeated calls | Keep the calculation pure: no saved state, no printing. Same input, same payslip, nothing changed | Safe to retry. If a payroll run that stores payslips is added later, key them by employee and week so a re-run can't pay twice |
 
 ## 5. Plan
@@ -90,8 +91,10 @@ After the fixes, on its own branch (`feat/payroll-run`):
 - Takes a list of employees with their hours and rate, and returns one report for the week.
 - Each line is a payslip broken down into basic pay, overtime, tax and net pay, so anyone can
   check how the number was reached.
-- A failure (unknown employee, bad hours) is listed in the report with its reason, and the run
-  carries on with everyone else. One bad entry doesn't stop the whole payroll.
+- Several lines for one employee are added up and paid once, so overtime is worked out on the
+  week's total.
+- A failure (unknown employee, bad hours, different rates) is listed in the report with its
+  reason, and the run carries on with everyone else. One bad entry doesn't stop the whole payroll.
 - Totals at the end: total net pay and the number of payslips and failures.
 - Same input gives the same report, and nothing is saved, so re-running a week is safe (see
   "Repeated calls" in section 4).
@@ -107,7 +110,7 @@ src/main/java/
 ├── domain/        Employee, HoursWorked, Payslip, PayrollCalculator
 ├── pay/           GrossPayCalculator
 ├── tax/           TaxPolicy, TaxBand, BandedTaxPolicy
-├── report/        PayrollRun, PayrollRunReport
+├── report/        PayrollRun, PayrollRunReport, PayrollEntry, PayrollFailure
 ├── repository/    EmployeeRepository, InMemoryEmployeeRepository
 ├── validation/    InputValidator
 └── exception/     EmployeeNotFoundException
