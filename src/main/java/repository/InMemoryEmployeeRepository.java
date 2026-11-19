@@ -1,5 +1,6 @@
-package com.rosewood.payroll;
+package repository;
 
+import domain.Employee;
 import java.util.HashMap;
 import java.util.Map;
 

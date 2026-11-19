@@ -103,7 +103,7 @@ payslip easy to check.
 
 ```text
 src/main/java/
-├── com/rosewood/payroll/Demo.java   only file left here, so the old run command still works
+├── Demo.java
 ├── domain/        Employee, HoursWorked, Payslip, PayrollCalculator
 ├── pay/           GrossPayCalculator
 ├── tax/           TaxPolicy, TaxBand, BandedTaxPolicy
@@ -113,8 +113,9 @@ src/main/java/
 └── exception/     EmployeeNotFoundException
 ```
 
-Everything else sits straight under `src/main/java`. In `pom.xml`, `exec.mainClass` points at
-`Demo` so `mvn compile exec:java` also works, and PIT is pointed at the new packages.
+Everything sits straight under `src/main/java`. `pom.xml` fixes the main class as `Demo`, so the
+old `-Dexec.mainClass=com.rosewood.payroll.Demo` command and a plain `mvn exec:java` both run it.
+PIT is pointed at the new packages.
 
 Tax gets its own package because it's the part most likely to change: a new rule is one new
 `TaxPolicy` class.
