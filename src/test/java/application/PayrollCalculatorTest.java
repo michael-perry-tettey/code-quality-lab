@@ -1,4 +1,4 @@
-package domain;
+package application;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -7,6 +7,9 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 
+import domain.Employee;
+import domain.HoursWorked;
+import domain.Payslip;
 import exception.EmployeeNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
