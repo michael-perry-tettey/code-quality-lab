@@ -129,7 +129,7 @@ Tax gets its own package because it's the part most likely to change: a new rule
 | `HoursWorked` requires a rate above 0 | A zero or negative rate can't produce a correct payslip | [#4 No input checks](#p4) |
 | Employee ID must not be blank, checked before the lookup | Fails with a clear message before any lookup | [#4 No input checks](#p4) |
 | Generic checks in `InputValidator` (`requireText`, `requireBetween`, `requirePositive`), each given the value's name; static, throwing `IllegalArgumentException` | Reused for any field without a new validator; the payroll limits stay in `HoursWorked`; static because there's no state to swap | [#4 No input checks](#p4) |
-| Repository passed in through the constructor; `findById` returns `Optional` | Tests can use a mock; "not found" can't be ignored | [#3 Repository created inside the class](#p3) |
+| Repository passed in through the constructor; `getById` throws `EmployeeNotFoundException` for an unknown ID | Tests can use a mock; the repository reports "not found" itself, so no caller can ignore it | [#3 Repository created inside the class](#p3) |
 | Overtime in `GrossPayCalculator`, with named constants | One job per class; numbers have names | [#6 One method does everything](#p6); [#9 Magic numbers](#p9) |
 | Tax behind `TaxPolicy`, bands as data, flat rate kept | A new tax rule is one new class, which absorbs the coming change | [#8 Tax bands are hard-coded](#p8) |
 | Calculator returns a `Payslip`; only `Demo` prints | No side effects; results can be tested | [#7 Calculator prints](#p7) |

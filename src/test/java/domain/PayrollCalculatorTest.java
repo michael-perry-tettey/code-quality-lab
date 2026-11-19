@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import exception.EmployeeNotFoundException;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -91,6 +90,7 @@ class PayrollCalculatorTest {
     @Test
     @DisplayName("Rejects an unknown employee")
     void rejectsAnUnknownEmployee() {
+        givenNoEmployee("unknown");
         assertThrows(EmployeeNotFoundException.class,
                 () -> calculator.calculateNetPay("unknown", 40, 20));
     }
@@ -98,6 +98,7 @@ class PayrollCalculatorTest {
     @Test
     @DisplayName("Names the missing employee in the error")
     void namesTheMissingEmployeeInTheError() {
+        givenNoEmployee("unknown");
         EmployeeNotFoundException error = assertThrows(EmployeeNotFoundException.class,
                 () -> calculator.calculateNetPay("unknown", 40, 20));
         assertEquals("No employee with ID 'unknown'", error.getMessage());
@@ -129,6 +130,10 @@ class PayrollCalculatorTest {
     }
 
     private void givenEmployee(String id) {
-        when(repository.findById(id)).thenReturn(Optional.of(new Employee(id, "Test Employee")));
+        when(repository.getById(id)).thenReturn(new Employee(id, "Test Employee"));
+    }
+
+    private void givenNoEmployee(String id) {
+        when(repository.getById(id)).thenThrow(new EmployeeNotFoundException(id));
     }
 }

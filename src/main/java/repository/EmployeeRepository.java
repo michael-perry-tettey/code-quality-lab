@@ -1,8 +1,9 @@
 package repository;
 
 import domain.Employee;
-import java.util.Optional;
 
 public interface EmployeeRepository {
-    Optional<Employee> findById(String id);
+
+    /** Returns the employee with this ID; throws EmployeeNotFoundException if there is none. */
+    Employee getById(String id);
 }

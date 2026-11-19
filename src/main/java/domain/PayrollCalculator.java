@@ -1,6 +1,5 @@
 package domain;
 
-import exception.EmployeeNotFoundException;
 import java.util.Objects;
 import repository.EmployeeRepository;
 
@@ -13,8 +12,7 @@ public class PayrollCalculator {
     }
 
     public double calculateNetPay(String employeeId, double hoursWorked, double hourlyRate) {
-        Employee employee = repository.findById(employeeId)
-                .orElseThrow(() -> new EmployeeNotFoundException(employeeId));
+        Employee employee = repository.getById(employeeId);
 
         double gross = hoursWorked * hourlyRate;
 
