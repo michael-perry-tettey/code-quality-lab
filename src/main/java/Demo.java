@@ -1,6 +1,7 @@
 import domain.Employee;
 import domain.HoursWorked;
 import domain.PayrollCalculator;
+import domain.Payslip;
 import exception.EmployeeNotFoundException;
 import java.util.List;
 import pay.GrossPayCalculator;
@@ -15,17 +16,26 @@ public class Demo {
         PayrollCalculator calculator = new PayrollCalculator(employees, new GrossPayCalculator(),
                 BandedTaxPolicy.rosewoodBands());
 
-        double efuaPay = calculator.calculateNetPay("e1", new HoursWorked(40, 20));
-        System.out.println("Result e1, 40h @ 20     -> " + efuaPay);
+        Payslip efuaPayslip = calculator.calculatePayslip("e1", new HoursWorked(40, 20));
+        printPayslip(efuaPayslip);
 
-        double kwamePay = calculator.calculateNetPay("e2", new HoursWorked(50, 30));
-        System.out.println("Result e2, 50h @ 30     -> " + kwamePay);
+        Payslip kwamePayslip = calculator.calculatePayslip("e2", new HoursWorked(50, 30));
+        printPayslip(kwamePayslip);
 
+        HoursWorked unknownHours = new HoursWorked(40, 20);
         try {
-            double unknownPay = calculator.calculateNetPay("unknown", new HoursWorked(40, 20));
-            System.out.println("Result unknown employee -> " + unknownPay);
+            Payslip unknownPayslip = calculator.calculatePayslip("unknown", unknownHours);
+            printPayslip(unknownPayslip);
         } catch (EmployeeNotFoundException e) {
-            System.out.println("Result unknown employee -> not paid: " + e.getMessage());
+            System.out.println("Not paid: " + e.getMessage());
         }
+    }
+
+    private static void printPayslip(Payslip payslip) {
+        System.out.println(payslip.employee().getName()
+                + ": basic " + payslip.basicPay()
+                + ", overtime " + payslip.overtimePay()
+                + ", tax " + payslip.tax()
+                + ", net " + payslip.netPay());
     }
 }
