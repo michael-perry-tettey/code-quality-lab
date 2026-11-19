@@ -3,11 +3,12 @@ package report;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 import domain.Employee;
 import domain.PayrollCalculator;
 import domain.Payslip;
-import java.math.BigDecimal;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import pay.GrossPayCalculator;

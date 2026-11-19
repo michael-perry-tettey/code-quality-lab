@@ -29,12 +29,14 @@ public final class BandedTaxPolicy implements TaxPolicy {
 
     private BigDecimal rateFor(BigDecimal grossPay) {
         BigDecimal rate = BigDecimal.ZERO;
+
         for (TaxBand band : bands) {
             BigDecimal lowerLimit = BigDecimal.valueOf(band.lowerLimit());
             if (grossPay.compareTo(lowerLimit) >= 0) {
                 rate = BigDecimal.valueOf(band.rate());
             }
         }
+
         return rate;
     }
 
@@ -42,6 +44,7 @@ public final class BandedTaxPolicy implements TaxPolicy {
         if (bands.isEmpty() || bands.get(0).lowerLimit() != 0) {
             throw new IllegalArgumentException("Tax bands must start at 0");
         }
+
         for (int i = 1; i < bands.size(); i++) {
             if (bands.get(i).lowerLimit() <= bands.get(i - 1).lowerLimit()) {
                 throw new IllegalArgumentException("Tax band limits must rise in order");

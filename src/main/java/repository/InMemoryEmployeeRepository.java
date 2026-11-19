@@ -1,10 +1,11 @@
 package repository;
 
-import domain.Employee;
-import exception.EmployeeNotFoundException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+import domain.Employee;
+import exception.EmployeeNotFoundException;
 
 public final class InMemoryEmployeeRepository implements EmployeeRepository {
 
@@ -19,9 +20,11 @@ public final class InMemoryEmployeeRepository implements EmployeeRepository {
     @Override
     public Employee getById(String id) {
         Employee employee = employees.get(id);
+
         if (employee == null) {
             throw new EmployeeNotFoundException(id);
         }
+
         return employee;
     }
 }

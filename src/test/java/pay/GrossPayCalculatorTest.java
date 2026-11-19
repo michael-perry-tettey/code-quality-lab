@@ -2,8 +2,9 @@ package pay;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import domain.HoursWorked;
 import java.math.BigDecimal;
+
+import domain.HoursWorked;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
