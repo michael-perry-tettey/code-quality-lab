@@ -1,5 +1,7 @@
 package domain;
 
+import static validation.InputValidator.requireText;
+
 import java.util.Objects;
 import repository.EmployeeRepository;
 
@@ -11,14 +13,17 @@ public class PayrollCalculator {
         this.repository = Objects.requireNonNull(repository, "repository");
     }
 
-    public double calculateNetPay(String employeeId, double hoursWorked, double hourlyRate) {
+    public double calculateNetPay(String employeeId, HoursWorked hoursWorked) {
+        requireText(employeeId, "Employee ID");
         Employee employee = repository.getById(employeeId);
+        double hours = hoursWorked.hours();
+        double hourlyRate = hoursWorked.hourlyRate();
 
-        double gross = hoursWorked * hourlyRate;
+        double gross = hours * hourlyRate;
 
         // overtime: extra hours beyond 40 are paid at time-and-a-half
-        if (hoursWorked > 40) {
-            gross = gross + (hoursWorked - 40) * hourlyRate * 0.5;
+        if (hours > 40) {
+            gross = gross + (hours - 40) * hourlyRate * 0.5;
         }
 
         // tax band, worked out from gross pay
