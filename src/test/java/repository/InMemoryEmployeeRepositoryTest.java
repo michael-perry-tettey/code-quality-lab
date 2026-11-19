@@ -1,9 +1,10 @@
 package repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import domain.Employee;
+import exception.EmployeeNotFoundException;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,12 +19,12 @@ class InMemoryEmployeeRepositoryTest {
     @Test
     @DisplayName("Finds an employee by ID")
     void findsAnEmployeeById() {
-        assertEquals(efua, repository.findById("e1").orElseThrow());
+        assertEquals(efua, repository.getById("e1"));
     }
 
     @Test
-    @DisplayName("Finds nothing for an unknown ID")
-    void findsNothingForAnUnknownId() {
-        assertTrue(repository.findById("unknown").isEmpty());
+    @DisplayName("Throws for an unknown ID")
+    void throwsForAnUnknownId() {
+        assertThrows(EmployeeNotFoundException.class, () -> repository.getById("unknown"));
     }
 }

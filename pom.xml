@@ -112,11 +112,13 @@
                         <param>domain.*</param>
                         <param>exception.*</param>
                         <param>repository.*</param>
+                        <param>validation.*</param>
                     </targetClasses>
                     <targetTests>
                         <param>domain.*</param>
                         <param>exception.*</param>
                         <param>repository.*</param>
+                        <param>validation.*</param>
                     </targetTests>
                 </configuration>
             </plugin>
