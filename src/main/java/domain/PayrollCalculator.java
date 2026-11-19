@@ -5,6 +5,7 @@ import static validation.InputValidator.requireText;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
+
 import pay.GrossPayCalculator;
 import repository.EmployeeRepository;
 import tax.TaxPolicy;
@@ -33,6 +34,7 @@ public final class PayrollCalculator {
         BigDecimal grossPay = basicPay.add(overtimePay);
         BigDecimal tax = toPesewas(taxPolicy.taxFor(grossPay));
         BigDecimal netPay = grossPay.subtract(tax);
+
         return new Payslip(employee, basicPay, overtimePay, tax, netPay);
     }
 

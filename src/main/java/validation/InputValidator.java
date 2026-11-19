@@ -9,6 +9,7 @@ public final class InputValidator {
         if (value == null || value.isBlank()) {
             throw new IllegalArgumentException(name + " must not be blank");
         }
+
         return value;
     }
 
@@ -17,6 +18,7 @@ public final class InputValidator {
             throw new IllegalArgumentException(
                     name + " must be between " + min + " and " + max + ", got " + value);
         }
+
         return value;
     }
 
@@ -24,6 +26,7 @@ public final class InputValidator {
         if (Double.isNaN(value) || value <= 0) {
             throw new IllegalArgumentException(name + " must be more than 0, got " + value);
         }
+
         return value;
     }
 }

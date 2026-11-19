@@ -5,8 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-import exception.EmployeeNotFoundException;
 import java.math.BigDecimal;
+
+import exception.EmployeeNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -114,7 +115,7 @@ class PayrollCalculatorTest {
     void putsTheEmployeeOnThePayslip() {
         givenEmployee("e1");
         Payslip payslip = calculator.calculatePayslip("e1", new HoursWorked(40, 20));
-        assertEquals("e1", payslip.employee().getId());
+        assertEquals("e1", payslip.employee().id());
     }
 
     @Test

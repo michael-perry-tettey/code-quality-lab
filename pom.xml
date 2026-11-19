@@ -14,8 +14,8 @@
         <junit.version>5.13.4</junit.version>
         <mockito.version>5.18.0</mockito.version>
         <jacoco.version>0.8.12</jacoco.version>
-        <pitest.version>1.16.1</pitest.version>
-        <pitest.junit5.version>1.2.1</pitest.junit5.version>
+        <pitest.version>1.30.2</pitest.version>
+        <pitest.junit5.version>1.2.3</pitest.junit5.version>
     </properties>
 
     <dependencyManagement>
@@ -112,6 +112,7 @@
                         <param>domain.*</param>
                         <param>exception.*</param>
                         <param>pay.*</param>
+                        <param>report.*</param>
                         <param>repository.*</param>
                         <param>tax.*</param>
                         <param>validation.*</param>
@@ -120,6 +121,7 @@
                         <param>domain.*</param>
                         <param>exception.*</param>
                         <param>pay.*</param>
+                        <param>report.*</param>
                         <param>repository.*</param>
                         <param>tax.*</param>
                         <param>validation.*</param>
