@@ -1,31 +1,97 @@
 package com.rosewood.payroll;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class PayrollCalculatorTest {
 
+    private static final double PESEWA_PRECISION = 0.0001;
+
+    private final PayrollCalculator calculator = new PayrollCalculator();
+
     @Test
-    void calculatesNetPay() {
-        PayrollCalculator calculator = new PayrollCalculator();
-        double net = calculator.calculateNetPay("e1", 40, 20);
-        assertTrue(net > 0); // it returned some pay
+    @DisplayName("Pays 40 hours without overtime")
+    void paysFortyHoursWithoutOvertime() {
+        assertEquals(760.00, calculator.calculateNetPay("e1", 40, 20), PESEWA_PRECISION);
     }
 
     @Test
-    void calculatesOvertimePay() {
-        // mock the calculator and check it returns what we told it to
-        PayrollCalculator calculator = mock(PayrollCalculator.class);
-        when(calculator.calculateNetPay("e2", 50, 30)).thenReturn(1402.5);
-        assertEquals(1402.5, calculator.calculateNetPay("e2", 50, 30));
+    @DisplayName("Pays hours over 40 at time and a half")
+    void paysHoursOverFortyAtTimeAndAHalf() {
+        assertEquals(1402.50, calculator.calculateNetPay("e2", 50, 30), PESEWA_PRECISION);
     }
 
     @Test
-    void returnsPayForAnEmployee() {
-        PayrollCalculator calculator = new PayrollCalculator();
-        double net = calculator.calculateNetPay("e1", 35, 25);
-        assertNotNull(net); // a result came back
+    @DisplayName("Adds no overtime at exactly 40 hours")
+    void addsNoOvertimeAtExactlyFortyHours() {
+        assertEquals(380.00, calculator.calculateNetPay("e1", 40, 10), PESEWA_PRECISION);
+    }
+
+    @Test
+    @DisplayName("Adds overtime from the first hour over 40")
+    void addsOvertimeFromTheFirstHourOverForty() {
+        assertEquals(394.25, calculator.calculateNetPay("e1", 41, 10), PESEWA_PRECISION);
+    }
+
+    @Test
+    @DisplayName("Pays nothing for zero hours")
+    void paysNothingForZeroHours() {
+        assertEquals(0.00, calculator.calculateNetPay("e1", 0, 20), PESEWA_PRECISION);
+    }
+
+    @Test
+    @DisplayName("Rounds net pay to 2 decimal places")
+    void roundsNetPayToTwoDecimalPlaces() {
+        assertEquals(949.99, calculator.calculateNetPay("e1", 1, 999.99), PESEWA_PRECISION);
+    }
+
+    @Test
+    @DisplayName("Taxes gross of exactly 1000 at 15%")
+    void taxesGrossOfExactlyOneThousandAtFifteenPercent() {
+        assertEquals(850.00, calculator.calculateNetPay("e1", 1, 1000), PESEWA_PRECISION);
+    }
+
+    @Test
+    @DisplayName("Taxes gross of exactly 5000 at 25%")
+    void taxesGrossOfExactlyFiveThousandAtTwentyFivePercent() {
+        assertEquals(3750.00, calculator.calculateNetPay("e1", 1, 5000), PESEWA_PRECISION);
+    }
+
+    @Test
+    @DisplayName("Rejects an unknown employee")
+    void rejectsAnUnknownEmployee() {
+        assertThrows(RuntimeException.class,
+                () -> calculator.calculateNetPay("unknown", 40, 20));
+    }
+
+    @ParameterizedTest
+    @DisplayName("Rejects hours outside 0 to 168")
+    @ValueSource(doubles = {-10, 169, Double.NaN})
+    void rejectsHoursOutsideZeroToOneSixtyEight(double hours) {
+        assertThrows(IllegalArgumentException.class,
+                () -> calculator.calculateNetPay("e1", hours, 20));
+    }
+
+    @ParameterizedTest
+    @DisplayName("Rejects an hourly rate that is not above 0")
+    @ValueSource(doubles = {0, -5, Double.NaN})
+    void rejectsAnHourlyRateThatIsNotAboveZero(double hourlyRate) {
+        assertThrows(IllegalArgumentException.class,
+                () -> calculator.calculateNetPay("e1", 40, hourlyRate));
+    }
+
+    @ParameterizedTest
+    @DisplayName("Rejects a blank employee ID")
+    @NullAndEmptySource
+    @ValueSource(strings = {"   "})
+    void rejectsABlankEmployeeId(String employeeId) {
+        assertThrows(IllegalArgumentException.class,
+                () -> calculator.calculateNetPay(employeeId, 40, 20));
     }
 }
