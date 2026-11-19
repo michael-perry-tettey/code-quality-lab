@@ -1,7 +1,7 @@
 import java.util.List;
 
 import domain.Employee;
-import domain.PayrollCalculator;
+import application.PayrollCalculator;
 import domain.Payslip;
 import pay.GrossPayCalculator;
 import report.PayrollEntry;

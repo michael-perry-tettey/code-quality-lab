@@ -41,7 +41,7 @@ public final class BandedTaxPolicy implements TaxPolicy {
     }
 
     private static void checkBandsStartAtZeroAndRise(List<TaxBand> bands) {
-        if (bands.isEmpty() || bands.get(0).lowerLimit() != 0) {
+        if (bands.isEmpty() || bands.get(0).lowerLimit() != 0.0) {
             throw new IllegalArgumentException("Tax bands must start at 0");
         }
 

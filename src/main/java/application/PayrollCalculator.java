@@ -1,4 +1,4 @@
-package domain;
+package application;
 
 import static validation.InputValidator.requireText;
 
@@ -6,6 +6,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
 
+import domain.Employee;
+import domain.HoursWorked;
+import domain.Payslip;
 import pay.GrossPayCalculator;
 import repository.EmployeeRepository;
 import tax.TaxPolicy;

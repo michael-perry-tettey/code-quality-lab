@@ -10,11 +10,8 @@ You need JDK 21 or later, and Maven.
 
 ```bash
 mvn compile
-mvn exec:java -Dexec.mainClass=com.rosewood.payroll.Demo
+mvn exec:java
 ```
-
-`Demo` moved out of `com.rosewood.payroll`, but this command still works: `pom.xml` fixes the
-main class as `Demo`, so `-Dexec.mainClass` is ignored. A plain `mvn compile exec:java` works too.
 
 The demo runs a sample week:
 
@@ -33,28 +30,28 @@ Efua has two 30-hour lines, which are added up and paid once, so she gets 20 hou
 ## Testing
 
 ```bash
-mvn test                                                    # 73 tests
+mvn test
 mvn verify                                                  # tests + coverage: target/site/jacoco/index.html
 mvn test-compile org.pitest:pitest-maven:mutationCoverage   # mutation testing: target/pit-reports/index.html
 ```
 
-- Coverage: 100% of lines and branches, outside `Demo`.
-- PIT: 42 of 42 mutants caught.
 - Each test checks an exact result, so it fails if the behaviour is wrong.
 
-PIT is 1.30.2, because 1.16.1 can't read Java 27 class files. It still works on JDK 21.
+PIT is 1.30.2 because version 1.16.1 cannot read Java 27 class files. The pinned version also
+runs on JDK 21.
 
 ## Design
 
 ```text
 src/main/java/
 ├── Demo.java      sets everything up and prints the report
-├── domain/        Employee, HoursWorked, Payslip, PayrollCalculator
+├── domain/        Employee, HoursWorked, Payslip
+├── application/   PayrollCalculator: coordinates pay, tax and employee lookup
 ├── pay/           GrossPayCalculator: basic pay and overtime
 ├── tax/           TaxPolicy, TaxBand, BandedTaxPolicy
 ├── report/        PayrollRun, PayrollRunReport, PayrollEntry, PayrollFailure
 ├── repository/    EmployeeRepository, InMemoryEmployeeRepository
-├── validation/    InputValidator
+├── validation/    InputValidator, PayrollValidationException
 └── exception/     EmployeeNotFoundException
 ```
 
@@ -62,21 +59,23 @@ src/main/java/
 employee, then works out basic pay, overtime, tax and net pay. It receives the repository, the
 gross pay calculator and the tax policy through its constructor, so tests can swap any of them.
 
-- Overtime: hours over 40 are paid at time and a half.
+- Overtime: hours over `GrossPayCalculator`'s `STANDARD_WEEK_HOURS` value are paid at time and a
+  half.
 - Money is `BigDecimal`. Basic pay, overtime and tax are rounded to 2 decimal places, half up,
   and net pay is gross minus tax, so every payslip adds up.
-- Only `Demo` prints.
+- Only `Demo` prints. Production code should send this output through a logger.
 
 ## Error handling
 
 | Problem | Thrown by | Exception |
 | --- | --- | --- |
 | Unknown employee | `EmployeeRepository.getById` | `EmployeeNotFoundException` |
-| Hours outside 0 to 168, or a rate of 0 or less | `HoursWorked` when created | `IllegalArgumentException` |
-| Blank employee ID or name | `PayrollCalculator`, `Employee` | `IllegalArgumentException` |
+| Hours outside 0 to 168, or a rate of 0 or less | `HoursWorked` when created | `PayrollValidationException` |
+| Blank employee ID or name | `PayrollCalculator`, `Employee` | `PayrollValidationException` |
 
 The class that finds the problem throws. The caller that can decide what to do catches:
-`PayrollRun` catches both exceptions for each employee, records the reason and carries on.
+`PayrollRun` catches `EmployeeNotFoundException` and `PayrollValidationException` for each
+employee, records the reason and carries on.
 Nothing catches `Exception` in general, so real bugs still show.
 
 ## Changing tax rules
